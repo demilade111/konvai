@@ -34,7 +34,7 @@ Customers ask questions → AI answers from your docs → escalates to a human w
 |---|---|---|
 | Backend | FastAPI (Python) | Any |
 | Database | PostgreSQL + pgvector | Supabase |
-| Vector search | pgvector | OpenSearch, Elasticsearch, Pinecone, Weaviate, Qdrant |
+| Hybrid search | pgvector (semantic) + PostgreSQL tsvector (keyword) | OpenSearch or Elasticsearch (replaces both) |
 | Cache | Redis | Valkey, Upstash |
 | Queue | Celery | BullMQ, RQ |
 | Storage | AWS S3 | GCS, Azure Blob, Cloudflare R2, MinIO |
