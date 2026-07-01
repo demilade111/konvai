@@ -36,7 +36,7 @@ def create_refresh_token(data: dict) -> str:
 
 
 def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
-    from app.models.user import User
+    from app.models.user.user import User
 
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,

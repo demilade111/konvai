@@ -6,8 +6,8 @@ from alembic import context
 
 from app.core.database import Base
 from app.core.config import settings
-import app.models.organization
-import app.models.user
+import app.models.organization.organization
+import app.models.user.user
 
 config = context.config
 
