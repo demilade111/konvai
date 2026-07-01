@@ -1,86 +1,70 @@
-# Konvai — AI Customer Support Platform
+# Vela
 
-> AI-powered support platform that answers customer questions from company documentation, escalates to human agents when needed, and never answers what it doesn't know.
+Open-source AI customer support platform. Self-host it or use the cloud version.
 
----
-
-## What It Does
-
-- Customers ask questions via an embeddable chat widget
-- AI retrieves answers from uploaded company docs (RAG) and streams a cited response
-- If confidence is low or customer is frustrated, escalates to a human agent with a full AI-generated summary
-- Agent joins a real-time chat with full conversation context already loaded
+Customers ask questions → AI answers from your docs → escalates to a human when it's not confident enough.
 
 ---
 
-## Tech Stack
+## Deploy it yourself or use the cloud
 
-| Layer | Technology |
-|---|---|
-| Frontend | React + Vite + TypeScript + Tailwind |
-| Backend | Python + FastAPI |
-| Database | PostgreSQL + pgvector |
-| Cache | Redis |
-| Queue | Celery |
-| Storage | AWS S3 |
-| AI | OpenAI GPT-4o + Anthropic Claude Sonnet |
-| Realtime | WebSockets + SSE |
-| Deployment | Docker Compose → Kubernetes |
+| | Self-hosted | Cloud |
+|---|---|---|
+| **Setup** | Docker Compose or Kubernetes | Sign up and go |
+| **Data** | Stays on your infra | Hosted by us |
+| **Cost** | Your API keys, your servers | Subscription |
+| **License** | MIT | — |
 
 ---
 
-## Key Features
+## How it works
 
-- **RAG pipeline** — chunk, embed, store, retrieve, cite
-- **Confidence-based escalation** — AI stops when it doesn't know
-- **Real-time agent chat** — WebSocket handoff with AI-generated summary
-- **Multi-tenant** — org-level data isolation at the database layer
-- **Tool calling** — AI can look up subscriptions, orders, and trigger actions
-- **Analytics dashboard** — resolution rate, CSAT, cost per conversation, knowledge gaps
-- **Document types** — PDF, DOCX, TXT, Markdown
-
----
-
-## Project Highlights (Interview)
-
-- Built a multi-tenant RAG platform with org-scoped pgvector search and PostgreSQL row-level security — zero cross-tenant data leakage by design
-- Engineered confidence-based escalation outside the LLM — retrieval scores and sentiment signals trigger handoff, not the model's self-assessment
-- Designed an AI handoff summary system that gives agents full context before they type a single word, reducing handle time structurally
-- Owned the full stack: data model, async document pipeline (Celery), SSE streaming, WebSocket real-time chat, React dashboard, and Docker deployment
+1. Upload your support docs (PDF, DOCX, TXT, Markdown)
+2. Vela processes them into a searchable knowledge base
+3. Customers ask questions via an embeddable chat widget
+4. AI answers with citations — streaming, real-time
+5. If confidence is low or customer asks for help, escalates to a human agent with a full AI-generated handoff summary
+6. Agent joins a live chat with full context already loaded
 
 ---
 
-## Local Setup
+## Stack
+
+| Layer | Default | Swap it for |
+|---|---|---|
+| Backend | FastAPI (Python) | Any |
+| Database | PostgreSQL + pgvector | Supabase |
+| Vector search | pgvector | OpenSearch, Elasticsearch, Pinecone, Weaviate, Qdrant |
+| Cache | Redis | Valkey, Upstash |
+| Queue | Celery | BullMQ, RQ |
+| Storage | AWS S3 | GCS, Azure Blob, Cloudflare R2, MinIO |
+| AI | OpenAI GPT-4o + Anthropic Claude | Any OpenAI-compatible provider |
+| Realtime | WebSockets + SSE | — |
+
+pgvector is the default — it keeps your vector and relational data in one place. If you're already running OpenSearch or Elasticsearch at scale, swap the retrieval layer and nothing else changes.
+
+---
+
+## Self-hosted setup
 
 ```bash
-# Clone and start
-git clone <repo>
+git clone https://github.com/demilade111/konvai
 cd konvai
-cp .env.example .env        # fill in API keys
-docker compose up --build   # starts all services
+cp .env.example .env        # add your API keys
+docker compose up --build
 ```
 
-Services:
-- API → http://localhost:8000
+- API → http://localhost:8000/docs
 - Frontend → http://localhost:5173
-- API Docs → http://localhost:8000/docs
 
 ---
 
-## Smoke Test
+## Features
 
-Once running, verify the core flow:
-
-- [ ] Register an organization at `/register`
-- [ ] Upload a PDF in the admin dashboard → status changes to `ready`
-- [ ] Open the AI test interface → ask a question → response streams with citation
-- [ ] Open the customer widget → ask the same question → see streamed response
-- [ ] Type "I want to talk to a human" → escalation triggers → ticket created
-- [ ] Open agent dashboard → ticket appears with AI summary
-- [ ] Agent replies → message appears in customer widget in real-time
-
----
-
-## Docs
-
-- [PRD](docs/PRD.md) — full product requirements and scope
+- RAG pipeline — chunk, embed, retrieve, cite
+- Confidence-based escalation — AI hands off when it doesn't know, not when it guesses wrong
+- Real-time agent chat — WebSocket handoff with AI summary pre-loaded
+- Multi-tenant — org-level data isolation, zero cross-tenant leakage
+- Tool calling — AI can query orders, subscriptions, trigger actions with human approval
+- Analytics — resolution rate, CSAT, cost per conversation, knowledge gaps
+- Embeddable widget — drop one script tag on any site
